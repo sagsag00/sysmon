@@ -1,6 +1,6 @@
 import psutil
 
-from _stats import CPUStats, MemoryStats, DiskStats, Metrics
+from src._stats import CPUStats, MemoryStats, DiskStats, Metrics
 
 def collect_metrics() -> Metrics:
     """
