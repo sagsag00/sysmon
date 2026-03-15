@@ -5,18 +5,18 @@ from typing import Callable
 import time
 from datetime import datetime
 
-from src._stats import Metrics
+from _stats import Metrics
 
 class Logger:
-    def __init__(self, path: str, format: str = "json"):
+    def __init__(self, path: str):
         self.path = Path(path)
-        self.format = format.lower()
+        self.format = self.path.suffix.replace(".", "")
         self.path.parent.mkdir(parents=True, exist_ok=True)
         
-    def start_logging(self, get_metrics: Callable):
+    def start_logging(self, get_metrics: Callable, args: tuple):
         """Starts logging until program stops."""
         while True:
-            metrics = get_metrics()
+            metrics = get_metrics(*(args or ()))
             self.log(metrics)
             time.sleep(1)
         
@@ -32,8 +32,11 @@ class Logger:
             "timestamp": datetime.now().isoformat(),
             "metrics": metrics
         }
-        with open(self.path, "a") as f:
-            f.write(json.dumps(entry) + "\n")
+        try:
+            with open(self.path, "a") as f:
+                f.write(json.dumps(entry) + "\n")
+        except (PermissionError, FileNotFoundError):
+            return
             
     def _log_csv(self, metrics: Metrics):
         row = {
@@ -51,9 +54,12 @@ class Logger:
             row[f"disk_{i}_total"] = disk["total"]
 
         write_header = not self.path.exists()
-        with open(self.path, "a", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=row.keys())
-            if write_header:
-                writer.writeheader()
-            writer.writerow(row)
+        try:
+            with open(self.path, "a", newline="") as f:
+                writer = csv.DictWriter(f, fieldnames=row.keys())
+                if write_header:
+                    writer.writeheader()
+                writer.writerow(row)
+        except (PermissionError, FileNotFoundError):
+            return
             

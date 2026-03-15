@@ -1,6 +1,6 @@
 import psutil
 
-from src._stats import CPUStats, MemoryStats, DiskStats, Metrics
+from _stats import CPUStats, MemoryStats, DiskStats, Metrics
 
 def collect_metrics(interval: float) -> Metrics:
     """
@@ -47,7 +47,7 @@ def get_cpu(interval: float = 2) -> CPUStats:
             core_count (int | None): Number of CPU cores.
     """
     per_core = psutil.cpu_percent(interval=interval, percpu=True)
-    total = sum(per_core) / len(per_core)
+    total = round(sum(per_core) / len(per_core), 1)
     return {
         "total_percent": total,
         "per_core_percent": per_core,

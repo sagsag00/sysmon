@@ -3,7 +3,7 @@ from rich.table import Table
 import time
 from typing import Callable
 
-from src._stats import Metrics
+from _stats import Metrics
 
 def render(get_metrics: Callable, args: tuple = None) -> None:
     """Renders a table of metrics that auto updates every 1 seconds."""
