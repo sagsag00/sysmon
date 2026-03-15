@@ -73,9 +73,9 @@ def get_memory():
     memory = psutil.virtual_memory()
     
     return {
-        "total": memory.total,
-        "used": memory.used,
-        "available": memory.available,
+        "total": gb(memory.total),
+        "used": gb(memory.used),
+        "available": gb(memory.available),
         "percent": memory.percent
     }
 
@@ -103,19 +103,25 @@ def get_disks():
         disks.append({
             "device": part.device,
             "mountpoint": part.mountpoint,
-            "total": usage.total,
-            "used": usage.used,
-            "free": usage.free,
+            "total": gb(usage.total),
+            "used": gb(usage.used),
+            "free": gb(usage.free),
             "percent": usage.percent
         })
         
     return disks
 
 def get_network():
-    """Gets the download and upload speeds"""
+    """Gets the download and upload speeds in MB/s"""
     net = psutil.net_io_counters()
 
     return {
-        "download": net.bytes_recv,
-        "upload": net.bytes_sent
+        "download": mb(net.bytes_recv),
+        "upload": mb(net.bytes_sent)
     }
+    
+def gb(b):
+    return round(b / (1024**3), 2)
+
+def mb(b):
+    return round(b / (1024**2), 2)

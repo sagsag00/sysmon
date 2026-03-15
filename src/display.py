@@ -31,7 +31,7 @@ def create_table(data: Metrics) -> Table:
         
     table.add_section()
     
-    table.add_row("Memory Usage ", f"[{format_color(memory['percent'])}]{memory['used'] / 1e9:.2f} GB / {memory['total'] / 1e9:.2f} GB")
+    table.add_row("Memory Usage ", f"[{format_color(memory['percent'])}]{memory['used']} GB / {memory['total']} GB")
     table.add_row("Memory Percent", f"[{format_color(memory['percent'])}]{memory['percent']}%")
     
     table.add_section()
@@ -39,15 +39,15 @@ def create_table(data: Metrics) -> Table:
     for disk in data["disks"]:
         table.add_row(
             f"Disk {disk['mountpoint']}",
-            f"[{format_color(disk['percent'])}]{disk['percent']:.1f}% ({disk['used'] / 1e9:.2f} GB / {disk['total'] / 1e9:.2f} GB)"
+            f"[{format_color(disk['percent'])}]{disk['percent']:.1f}% ({disk['used']} GB / {disk['total']} GB)"
         )
         
     table.add_section()
     
     network = data["network"]
     
-    table.add_row("Download Speed", f"[blue]{network['download'] / (1024**2):.2f} MB/s")
-    table.add_row("Upload Speed", f"[blue]{network['upload'] / (1024**2):.2f} MB/s")
+    table.add_row("Download Speed", f"[blue]{network['download']} MB/s")
+    table.add_row("Upload Speed", f"[blue]{network['upload']} MB/s")
         
     return table
 

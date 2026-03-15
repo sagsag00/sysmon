@@ -37,7 +37,7 @@ def main():
     log_path = args.log
     log_format = args.format
     
-    logger = Logger(log_path if log_path else f"/log.{log_format}") 
+    logger = Logger(log_path if log_path else f"logs/log.{log_format}") 
     
     if logger:
         logging_thread = threading.Thread(target=logger.start_logging, args=(collect_metrics, (interval,)), daemon=True)
