@@ -90,7 +90,7 @@ def get_disks() -> list[DiskStats]:
     for part in psutil.disk_partitions():
         try:
             usage = psutil.disk_usage(part.mountpoint)
-        except PermissionError:
+        except (PermissionError, FileNotFoundError):
             continue
         
         disks.append({
