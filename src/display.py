@@ -3,17 +3,17 @@ from rich.table import Table
 import time
 from typing import Callable
 
-from _stats import Metrics
+from src._stats import Metrics
 
-def render(get_metrics: Callable, interval: float = 1) -> None:
-    """Renders a table of metrics that auto updates every `interval` seconds"""
+def render(get_metrics: Callable, args: tuple = None) -> None:
+    """Renders a table of metrics that auto updates every 1 seconds."""
     with Live(refresh_per_second=4) as live:
         while True:
-            data = get_metrics()
+            data = get_metrics(*(args or ()))
             table = create_table(data)
             
             live.update(table)
-            time.sleep(interval)
+            time.sleep(1)
             
 def create_table(data: Metrics) -> Table:
     """Creates a table with the provided data"""

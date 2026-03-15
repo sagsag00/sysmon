@@ -3,6 +3,7 @@ import csv
 from pathlib import Path
 from typing import Callable
 import time
+from datetime import datetime
 
 from src._stats import Metrics
 
@@ -12,27 +13,31 @@ class Logger:
         self.format = format.lower()
         self.path.parent.mkdir(parents=True, exist_ok=True)
         
-    def start_logging(self, get_metrics: Callable, interval: float = 1):
-        """Starts logging until proram stops."""
+    def start_logging(self, get_metrics: Callable):
+        """Starts logging until program stops."""
         while True:
             metrics = get_metrics()
             self.log(metrics)
-            time.sleep(interval)
+            time.sleep(1)
         
     def log(self, metrics: Metrics):
         """Appends a single metric snapshot to the log file."""
-        
         if self.format == "json":
             self._log_json(metrics)
         elif self.format == "csv":
             self._log_csv(metrics)
             
     def _log_json(self, metrics: Metrics):
+        entry = {
+            "timestamp": datetime.now().isoformat(),
+            "metrics": metrics
+        }
         with open(self.path, "a") as f:
-            f.write(json.dumps(metrics) + "\n")
+            f.write(json.dumps(entry) + "\n")
             
     def _log_csv(self, metrics: Metrics):
         row = {
+            "timestamp": datetime.now().isoformat(),
             "cpu_total_percent": metrics["cpu"]["total_percent"],
             "cpu_core_count": metrics["cpu"]["core_count"],
             "memory_used": metrics["memory"]["used"],

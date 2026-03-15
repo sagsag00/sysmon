@@ -2,7 +2,7 @@ import psutil
 
 from src._stats import CPUStats, MemoryStats, DiskStats, Metrics
 
-def collect_metrics() -> Metrics:
+def collect_metrics(interval: float) -> Metrics:
     """
     Collect all system metrics.
 
@@ -28,17 +28,17 @@ def collect_metrics() -> Metrics:
                 - percent (float)
     """
     return {
-        "cpu": get_cpu(),
+        "cpu": get_cpu(interval),
         "memory": get_memory(),
         "disks": get_disks()
     }
 
-def get_cpu(interval: float = 1) -> CPUStats:
+def get_cpu(interval: float = 2) -> CPUStats:
     """
     Collect CPU usage statistics.
     
     Args:
-        int: The interval between checks in seconds. Default: 1.
+        int: The interval between checks in seconds. Default: 2.
 
     Returns:
         dict: CPU statistics containing:
@@ -46,9 +46,11 @@ def get_cpu(interval: float = 1) -> CPUStats:
             per_core_percent (list[float]): CPU usage percentage per core.
             core_count (int | None): Number of CPU cores.
     """
+    per_core = psutil.cpu_percent(interval=interval, percpu=True)
+    total = sum(per_core) / len(per_core)
     return {
-        "total_percent": psutil.cpu_percent(interval=interval),
-        "per_core_percent": psutil.cpu_percent(interval=interval, percpu=True),
+        "total_percent": total,
+        "per_core_percent": per_core,
         "core_count": psutil.cpu_count()
     }
 

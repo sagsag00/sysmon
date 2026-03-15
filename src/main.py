@@ -1,17 +1,52 @@
 import threading
+import argparse
+import sys
 
-from collector import collect_metrics
-from display import render
-from logger import Logger
+from src.collector import collect_metrics
+from src.display import render
+from src.logger import Logger
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="SysMon - System Monitoring CLI Tool")
+    parser.add_argument(
+        "--interval", "-i",
+        type=float,
+        default=2.0,
+        help="Polling interval in seconds (default: 2s)"
+    )
+    parser.add_argument(
+        "--log", "-l",
+        type=str,
+        default=None,
+        help="Path to log file (CSV or JSON)"
+    )
+    parser.add_argument(
+        "--format", "-f",
+        type=str,
+        choices=["json", "csv"],
+        default="json",
+        help="Log format if --log is specified (default: json)"
+    )
+    
+    return parser.parse_args()
 
 def main():
-    interval = 1
+    args = parse_args()
+    interval = args.interval
+    log_path = args.log
+    log_format = args.format
     
-    logger = Logger("logs/sysmon.json", format="json")
-    logging_thread = threading.Thread(target=logger.start_logging, args=(collect_metrics, interval), daemon=True)
-    logging_thread.start()
+    logger = Logger(log_path, format=log_format) if log_path else None
     
-    render(collect_metrics, interval)
+    if logger:
+        logging_thread = threading.Thread(target=logger.start_logging, args=(collect_metrics,), daemon=True)
+        logging_thread.start()
+    
+    try:
+        render(collect_metrics, args=(interval,))
+    except KeyboardInterrupt:
+        print("\n[bold red]SysMon stopped by user.")
+        sys.exit(0)
     
 if __name__ == "__main__":
     main()
