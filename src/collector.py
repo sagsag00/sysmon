@@ -1,8 +1,8 @@
 import psutil
 
-from _stats import CPUStats, MemoryStats, DiskStats, Metrics
+# from _stats import CPUStats, MemoryStats, DiskStats, Metrics
 
-def collect_metrics(interval: float) -> Metrics:
+def collect_metrics(interval: float = 2):
     """
     Collect all system metrics.
 
@@ -33,7 +33,7 @@ def collect_metrics(interval: float) -> Metrics:
         "disks": get_disks()
     }
 
-def get_cpu(interval: float = 2) -> CPUStats:
+def get_cpu(interval: float = 2):
     """
     Collect CPU usage statistics.
     
@@ -54,7 +54,7 @@ def get_cpu(interval: float = 2) -> CPUStats:
         "core_count": psutil.cpu_count()
     }
 
-def get_memory() -> MemoryStats:
+def get_memory():
     """
     Get memory statistics.
 
@@ -74,7 +74,7 @@ def get_memory() -> MemoryStats:
         "percent": memory.percent
     }
 
-def get_disks() -> list[DiskStats]:
+def get_disks():
     """
     Get statistics for each disk partition.
 
@@ -87,7 +87,7 @@ def get_disks() -> list[DiskStats]:
             free (int): Free bytes.
             percent (float): Percent usage.
     """
-    disks: list[DiskStats] = []
+    disks = []
     
     for part in psutil.disk_partitions():
         try:

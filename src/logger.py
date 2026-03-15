@@ -5,7 +5,7 @@ from typing import Callable
 import time
 from datetime import datetime
 
-from _stats import Metrics
+# from _stats import Metrics
 
 class Logger:
     def __init__(self, path: str):
@@ -20,14 +20,14 @@ class Logger:
             self.log(metrics)
             time.sleep(1)
         
-    def log(self, metrics: Metrics):
+    def log(self, metrics):
         """Appends a single metric snapshot to the log file."""
         if self.format == "json":
             self._log_json(metrics)
         elif self.format == "csv":
             self._log_csv(metrics)
             
-    def _log_json(self, metrics: Metrics):
+    def _log_json(self, metrics):
         entry = {
             "timestamp": datetime.now().isoformat(),
             "metrics": metrics
@@ -38,7 +38,7 @@ class Logger:
         except (PermissionError, FileNotFoundError):
             return
             
-    def _log_csv(self, metrics: Metrics):
+    def _log_csv(self, metrics):
         row = {
             "timestamp": datetime.now().isoformat(),
             "cpu_total_percent": metrics["cpu"]["total_percent"],
