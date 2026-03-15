@@ -30,7 +30,7 @@ def create_report_table(data: dict) -> Table:
     table.add_column("Avg")
 
     def fmt_percent(key, val, time):
-        return f"[{format_color(val)}]{val:.1f}% @ {time}"
+        return f"{val:.1f}% @ {time}"
 
     def fmt_val(val, time, unit=""):
         return f"{val:.2f}{unit} @ {time}"
