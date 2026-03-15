@@ -45,7 +45,9 @@ class Logger:
             "cpu_core_count": metrics["cpu"]["core_count"],
             "memory_used": metrics["memory"]["used"],
             "memory_total": metrics["memory"]["total"],
-            "memory_percent": metrics["memory"]["percent"]
+            "memory_percent": metrics["memory"]["percent"],
+            "download_speed": metrics["network"]["download"],
+            "upload_speed": metrics["network"]["upload"]
         }
         for i, disk in enumerate(metrics["disks"]):
             row[f"disk_{i}_mount"] = disk["mountpoint"]

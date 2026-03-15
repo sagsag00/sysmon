@@ -1,6 +1,6 @@
 import psutil
 
-# from _stats import CPUStats, MemoryStats, DiskStats, Metrics
+# from _stats import CPUStats, MemoryStats, DiskStats, NetworkStats, Metrics
 
 def collect_metrics(interval: float = 2):
     """
@@ -26,11 +26,16 @@ def collect_metrics(interval: float = 2):
                 - used (int)
                 - free (int)
                 - percent (float)
+            
+            network (dict): Network statistics:
+                - download (int)
+                - upload (int)
     """
     return {
         "cpu": get_cpu(interval),
         "memory": get_memory(),
-        "disks": get_disks()
+        "disks": get_disks(),
+        "network": get_network()
     }
 
 def get_cpu(interval: float = 2):
@@ -105,3 +110,12 @@ def get_disks():
         })
         
     return disks
+
+def get_network():
+    """Gets the download and upload speeds"""
+    net = psutil.net_io_counters()
+
+    return {
+        "download": net.bytes_recv,
+        "upload": net.bytes_sent
+    }

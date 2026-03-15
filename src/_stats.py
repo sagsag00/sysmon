@@ -19,7 +19,11 @@ class DiskStats(TypedDict):
     free: int
     percent: float
     
+class NetworkStats(TypedDict):
+    download: int
+    upload: int
 class Metrics(TypedDict):
     cpu: CPUStats
     memory: MemoryStats
     disks: list[DiskStats]
+    network: NetworkStats

@@ -14,7 +14,11 @@ def fake_metrics():
                 "used": 300,
                 "total": 500
             }
-        ]
+        ],
+        "network": {
+            "download": 1000,
+            "upload": 100
+        }
     }
     
 def test_json_logging(tmp_path):

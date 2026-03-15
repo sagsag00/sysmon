@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from types import SimpleNamespace
 
-from src.collector import get_cpu, get_memory, get_disks, collect_metrics
+from src.collector import get_cpu, get_memory, get_disks, get_network, collect_metrics
 from src._stats import CPUStats, MemoryStats, DiskStats, Metrics
 
 def test_get_cpu():
@@ -57,13 +57,31 @@ def test_get_disks():
         disks = get_disks()
         assert disks == []
             
+def test_get_network():
+    mock_network = SimpleNamespace(
+        bytes_recv = 1000,
+        bytes_sent = 100
+    )
+    
+    with patch("psutil.net_io_counters", return_value=mock_network):
+        network = get_network()
+        assert network["download"] == 1000
+        assert network["upload"] == 100
+            
 def test_collect_metrics():
-    with patch("src.collector.get_cpu") as mock_cpu, patch("src.collector.get_memory") as mock_memory, patch("src.collector.get_disks") as mock_disks:
+    with (
+        patch("src.collector.get_cpu") as mock_cpu,
+        patch("src.collector.get_memory") as mock_memory,
+        patch("src.collector.get_disks") as mock_disks,
+        patch("src.collector.get_network") as mock_network
+        ):
         mock_cpu.return_value = {"total_percent": 10, "per_core_percent": [10, 10], "core_count": 2}
         mock_memory.return_value = {"total": 4000, "used": 400, "available": 3600, "percent": 10}
         mock_disks.return_value = [{"device": "/dev/sda1", "mountpoint": "/", "total": 1000, "used": 100, "free": 900, "percent": 10}]
+        mock_network.return_value = {"download": 1000, "upload": 100}
         
         metrics = collect_metrics()
         assert "cpu" in metrics
         assert "memory" in metrics
         assert "disks" in metrics
+        assert "network" in metrics
