@@ -1,4 +1,3 @@
-import pytest
 from unittest.mock import patch
 
 from src.collector import get_cpu, get_memory, get_disks, collect_metrics
