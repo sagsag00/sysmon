@@ -22,4 +22,4 @@ class DiskStats(TypedDict):
 class Metrics(TypedDict):
     cpu: CPUStats
     memory: MemoryStats
-    disk: list[DiskStats]
+    disks: list[DiskStats]
