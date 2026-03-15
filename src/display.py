@@ -6,6 +6,7 @@ from typing import Callable
 from _stats import Metrics
 
 def render(get_metrics: Callable, interval: float = 1) -> None:
+    """Renders a table of metrics that auto updates every `interval` seconds"""
     with Live(refresh_per_second=4) as live:
         while True:
             data = get_metrics()
@@ -15,6 +16,7 @@ def render(get_metrics: Callable, interval: float = 1) -> None:
             time.sleep(interval)
             
 def create_table(data: Metrics) -> Table:
+    """Creates a table with the provided data"""
     table = Table(title="System Metrics")
     table.add_column("Metric")
     table.add_column("Value")
@@ -43,6 +45,18 @@ def create_table(data: Metrics) -> Table:
     return table
 
 def format_color(percent: float) -> str:
+    """
+    Returns `green` if percent < 60.
+    `yellow` if 60 <= percent < 85.
+    `red` if percent >= 85.
+    
+
+    Args:
+        percent (float): _description_
+
+    Returns:
+        str: _description_
+    """
     if percent < 60:
         return "green"
     if percent < 85:

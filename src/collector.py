@@ -33,12 +33,12 @@ def collect_metrics() -> Metrics:
         "disks": get_disks()
     }
 
-def get_cpu(interval: float = 2) -> CPUStats:
+def get_cpu(interval: float = 1) -> CPUStats:
     """
     Collect CPU usage statistics.
     
     Args:
-        int: The interval between checks in seconds. Default: 2.
+        int: The interval between checks in seconds. Default: 1.
 
     Returns:
         dict: CPU statistics containing:
