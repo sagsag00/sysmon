@@ -65,17 +65,17 @@ def get_memory():
 
     Returns:
         dict: Memory statistics containing:
-            total (int): The total memory in the system.
-            used (int): The amount of used memory.
-            available (int): The amount of free/available memory.
+            total (int): The total memory in the system. (GiB)
+            used (int): The amount of used memory. (GiB)
+            available (int): The amount of free/available memory. (GiB)
             percent (float): Percent usage. 
     """
     memory = psutil.virtual_memory()
     
     return {
-        "total": gb(memory.total),
-        "used": gb(memory.used),
-        "available": gb(memory.available),
+        "total": gib(memory.total),
+        "used": gib(memory.used),
+        "available": gib(memory.available),
         "percent": memory.percent
     }
 
@@ -87,9 +87,9 @@ def get_disks():
         list[dict]: Statistics for each partition containing:
             device (str): Device path.
             mountpoint (str): Mountpoint path.
-            total (int): Total bytes in the disk.
-            used (int): Used bytes.
-            free (int): Free bytes.
+            total (int): Total bytes in the disk. (GB)
+            used (int): Used bytes. (GB)
+            free (int): Free bytes. (GB)
             percent (float): Percent usage.
     """
     disks = []
@@ -112,7 +112,7 @@ def get_disks():
     return disks
 
 def get_network():
-    """Gets the download and upload speeds in MB/s"""
+    """Gets the download and upload speeds in MB"""
     net = psutil.net_io_counters()
 
     return {
@@ -120,8 +120,11 @@ def get_network():
         "upload": mb(net.bytes_sent)
     }
     
-def gb(b):
+def gib(b):
     return round(b / (1024**3), 2)
 
+def gb(b):
+    return  round(b / (1000**3), 2)
+
 def mb(b):
-    return round(b / (1024**2), 2)
+    return round(b / (1000**2), 2)

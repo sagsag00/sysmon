@@ -43,8 +43,8 @@ class Logger:
             "timestamp": datetime.now().isoformat(),
             "cpu_total_percent": metrics["cpu"]["total_percent"],
             "cpu_core_count": metrics["cpu"]["core_count"],
-            "memory_used (GB)": metrics["memory"]["used"],
-            "memory_total (GB)": metrics["memory"]["total"],
+            "memory_used (GiB)": metrics["memory"]["used"],
+            "memory_total (GiB)": metrics["memory"]["total"],
             "memory_percent": metrics["memory"]["percent"],
             "download_speed (MB/s)": metrics["network"]["download"],
             "upload_speed (MB/s)": metrics["network"]["upload"]

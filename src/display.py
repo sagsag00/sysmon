@@ -31,7 +31,7 @@ def create_table(data: Metrics) -> Table:
         
     table.add_section()
     
-    table.add_row("Memory Usage ", f"[{format_color(memory['percent'])}]{memory['used']} GB / {memory['total']} GB")
+    table.add_row("Memory Usage ", f"[{format_color(memory['percent'])}]{memory['used']} GiB / {memory['total']} GiB")
     table.add_row("Memory Percent", f"[{format_color(memory['percent'])}]{memory['percent']}%")
     
     table.add_section()
