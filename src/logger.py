@@ -36,7 +36,7 @@ class Logger:
             try:
                 with open(self.path, "r") as f:
                     log_data = json.load(f)
-            except json.JSONDecodeError:
+            except (json.JSONDecodeError, FileNotFoundError, PermissionError):
                 log_data = {}
                 
         if date not in log_data:

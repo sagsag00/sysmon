@@ -4,8 +4,9 @@ import sys
 from rich import print
 
 from collector import collect_metrics
-from display import render
+from display import render, print_data
 from logger import Logger
+from report import get_by_date
 
 def parse_args():
     parser = argparse.ArgumentParser(description="SysMon - System Monitoring CLI Tool")
@@ -28,6 +29,12 @@ def parse_args():
         default="json",
         help="Log file extension"
     )
+    parser.add_argument(
+        "--date", "-d",
+        type=str,
+        default=None,
+        help="Prints max/min/avg of each metric for the given date"
+    )
     
     return parser.parse_args()
 
@@ -36,8 +43,15 @@ def main():
     interval = args.interval
     log_path = args.log
     log_format = args.format
+    date = args.date
     
-    logger = Logger(log_path if log_path else f"logs/log.{log_format}") 
+    log_path = log_path if log_path else f"logs/log.{log_format}"
+    
+    if date:
+        data = get_by_date(log_path, date)
+        print_data(data)
+    
+    logger = Logger(log_path) 
     
     if logger:
         logging_thread = threading.Thread(target=logger.start_logging, args=(collect_metrics, (interval,)), daemon=True)
