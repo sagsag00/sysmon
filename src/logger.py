@@ -5,7 +5,7 @@ from typing import Callable
 import time
 from datetime import datetime
 
-from src._stats import Metrics
+from _stats import Metrics
 
 class Logger:
     def __init__(self, path: str):
