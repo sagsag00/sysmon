@@ -58,12 +58,47 @@ python src/main.py --date 2026-03-16
   "2026-03-16": {
     "10:00:00": {
       "metrics": {
-        "cpu": { "total_percent": 45.2, "core_count": 8 },
-        "memory": { "used": 6.1, "total": 16.0, "percent": 38.1 },
-        "disks": [{ "device": "/dev/sda1", "mountpoint": "/", "percent": 60.0 }],
-        "network": { "download": 120.5, "upload": 10.2 }
+        "cpu": {
+            "total_percent": 50.0,
+            "per_core_percent": [
+                56.9,
+                54.7,
+                53.8,
+                41.5,
+                40.6,
+                52.3
+            ],
+            "core_count": 6
+        },
+        "memory": {
+            "total": 31.94,
+            "used": 15.82,
+            "available": 16.12,
+            "percent": 49.5
+        },
+        "disks": [
+            {
+                "device": "C:\\",
+                "mountpoint": "C:\\",
+                "total": 498.26,
+                "used": 442.01,
+                "free": 56.25,
+                "percent": 88.7
+            },
+            {
+                "device": "D:\\",
+                "mountpoint": "D:\\",
+                "total": 500.1,
+                "used": 424.2,
+                "free": 75.91,
+                "percent": 84.8
+            }
+        ],
+        "network": {
+            "download": 209.38,
+            "upload": 17.37
+        }
       }
-    }
   }
 }
 ```
