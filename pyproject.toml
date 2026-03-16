@@ -1,0 +1,18 @@
+[project]
+name = "sysmon"
+version = "1.0"
+description = "A Python tool for collecting, logging, and reporting system metrics (CPU, memory, disk, network) using psutil and rich."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "psutil",
+    "rich",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+[dependency-groups]
+dev = [
+    "pytest",
+]

@@ -1,9 +1,8 @@
 import psutil
 
-# from _stats import CPUStats, MemoryStats, DiskStats, NetworkStats, Metrics
-from config import Config
+from _stats import CPUStats, MemoryStats, DiskStats, NetworkStats, Metrics
 
-def collect_metrics(interval: float = 2):
+def collect_metrics(interval: float = 2) -> Metrics:
     """
     Collect all system metrics.
 
@@ -39,7 +38,7 @@ def collect_metrics(interval: float = 2):
         "network": get_network()
     }
 
-def get_cpu(interval: float = 2):
+def get_cpu(interval: float = 2) -> CPUStats:
     """
     Collect CPU usage statistics.
     
@@ -60,7 +59,7 @@ def get_cpu(interval: float = 2):
         "core_count": psutil.cpu_count()
     }
 
-def get_memory():
+def get_memory() -> MemoryStats:
     """
     Get memory statistics.
 
@@ -80,7 +79,7 @@ def get_memory():
         "percent": memory.percent
     }
 
-def get_disks():
+def get_disks() -> DiskStats:
     """
     Get statistics for each disk partition.
 
@@ -112,7 +111,7 @@ def get_disks():
         
     return disks
 
-def get_network():
+def get_network() -> NetworkStats:
     """Gets the download and upload speeds in MB"""
     net = psutil.net_io_counters()
 
