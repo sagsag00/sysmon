@@ -84,5 +84,5 @@ the tests, and would fix small issues that I had with the code.
 
 [End]
 Now I just fixed small issues, added more test cases to the files,
-added --mem-warn and --cpu-warn (by adding `config.py` file)
+added --mem-warn and --cpu-warn (by adding `config.py` file) - decided to not send a netification, just display in red
 and lastly I wrote the README.md, added requirements.txt (just incase) and made `_stats.py` work with `collector.py`
