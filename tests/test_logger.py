@@ -1,5 +1,6 @@
 import json
 import csv
+from datetime import datetime
 
 from src.logger import Logger
 
@@ -30,11 +31,14 @@ def test_json_logging(tmp_path):
     assert log_file.exists()
     
     with open(log_file) as f:
-        line = f.readline()
-        data = json.loads(line)
+        data: dict = json.load(f)
     
-    assert "timestamp" in data
-    assert data["metrics"]["cpu"]["total_percent"] == 50
+    date = str(datetime.now().date())
+    
+    assert  date in data
+    
+    time_entry = next(iter(data[date].values()))
+    assert time_entry["metrics"]["cpu"]["total_percent"] == 50
     
 def test_csv_logging(tmp_path):
     log_file = tmp_path / "metrics.csv"

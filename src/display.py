@@ -145,7 +145,6 @@ def format_color(percent: float) -> str:
     `yellow` if 60 <= percent < 85.
     `red` if percent >= 85.
     
-
     Args:
         percent (float): _description_
 
