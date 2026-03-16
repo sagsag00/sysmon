@@ -6,7 +6,7 @@ from src._stats import CPUStats, MemoryStats, DiskStats, Metrics
 
 def test_get_cpu():
     with patch("psutil.cpu_percent") as mock_cpu, patch("psutil.cpu_count") as mock_count:
-        mock_cpu.side_effect = [[10, 20, 30, 40]]
+        mock_cpu.return_value = [10, 20, 30, 40]
         mock_count.return_value = 4
         
         cpu: CPUStats = get_cpu()
