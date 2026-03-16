@@ -78,3 +78,11 @@ Gigabytes or in Gibibytes.
 I already explained the steps I took to have this work, other than those steps, I only needed
 to add a function that will create a table for the report, to make it readable.
 
+[test_reports.py]
+It was pretty straightforward to make this module, overall, I just created the functions, and ran
+the tests, and would fix small issues that I had with the code.
+
+[End]
+Now I just fixed small issues, added more test cases to the files,
+added --mem-warn and --cpu-warn (by adding `config.py` file)
+and lastly I wrote the README.md.
