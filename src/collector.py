@@ -1,6 +1,7 @@
 import psutil
 
 # from _stats import CPUStats, MemoryStats, DiskStats, NetworkStats, Metrics
+from config import Config
 
 def collect_metrics(interval: float = 2):
     """

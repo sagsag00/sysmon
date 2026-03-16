@@ -7,6 +7,7 @@ from collector import collect_metrics
 from display import render, print_data
 from logger import Logger
 from report import get_by_date
+from config import Config
 
 def parse_args():
     parser = argparse.ArgumentParser(description="SysMon - System Monitoring CLI Tool")
@@ -35,6 +36,18 @@ def parse_args():
         default=None,
         help="Prints max/min/avg of each metric for the given date"
     )
+    parser.add_argument(
+        "--cpu-warn", 
+        type=float,
+        default=85,
+        help="Sets a cpu threshold that when exceeded a warning notification will be sent"
+    )
+    parser.add_argument(
+        "--mem-warn",
+        type=float,
+        default=85,
+        help="Sets a memory threshold that when exceeded a warning notification will be sent"
+    )
     
     return parser.parse_args()
 
@@ -44,6 +57,11 @@ def main():
     log_path = args.log
     log_format = args.format
     date = args.date
+    cpu_warn = args.cpu_warn
+    mem_warn = args.mem_warn
+    
+    Config.cpu_warn = cpu_warn
+    Config.mem_warn = mem_warn
     
     log_path = log_path if log_path else f"logs/log.{log_format}"
     

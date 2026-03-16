@@ -5,6 +5,7 @@ import time
 from typing import Callable
 
 from _stats import Metrics
+from config import Config
 
 def render(get_metrics: Callable, args: tuple = None) -> None:
     """Renders a table of metrics that auto updates every 1 seconds."""
@@ -112,15 +113,15 @@ def create_table(data: Metrics) -> Table:
     cpu = data["cpu"]
     memory = data["memory"]
 
-    table.add_row("CPU Usage", f"[{format_color(cpu['total_percent'])}]{cpu['total_percent']}%")
+    table.add_row("CPU Usage", f"[{format_color(cpu['total_percent'], "cpu")}]{cpu['total_percent']}%")
     table.add_row("CPU Cores", str(cpu["core_count"]))
     for i, core in enumerate(cpu["per_core_percent"]):
-        table.add_row(f"CPU Core {i}", f"[{format_color(core)}]{core}%")
+        table.add_row(f"CPU Core {i}", f"[{format_color(core, "cpu")}]{core}%")
         
     table.add_section()
     
-    table.add_row("Memory Usage ", f"[{format_color(memory['percent'])}]{memory['used']} GiB / {memory['total']} GiB")
-    table.add_row("Memory Percent", f"[{format_color(memory['percent'])}]{memory['percent']}%")
+    table.add_row("Memory Usage ", f"[{format_color(memory['percent'], "memory")}]{memory['used']} GiB / {memory['total']} GiB")
+    table.add_row("Memory Percent", f"[{format_color(memory['percent'], "memory")}]{memory['percent']}%")
     
     table.add_section()
     
@@ -139,20 +140,20 @@ def create_table(data: Metrics) -> Table:
         
     return table
 
-def format_color(percent: float) -> str:
+def format_color(percent: float, component: str = "") -> str:
     """
-    Returns `green` if percent < 60.
-    `yellow` if 60 <= percent < 85.
-    `red` if percent >= 85.
+    Returns `green` if percent < 0.7 * threshold.
+    `yellow` if 0.7 * threshold <= percent < threshold.
+    `red` if percent >= threshold.
+    """
+    threshold = 85
+    if component == "cpu":
+        threshold = Config.cpu_warn
+    elif component == "memory":
+        threshold = Config.mem_warn
     
-    Args:
-        percent (float): _description_
-
-    Returns:
-        str: _description_
-    """
-    if percent < 60:
+    if percent < 0.7 * threshold:
         return "green"
-    if percent < 85:
+    if percent < threshold:
         return "yellow"
     return "red"
