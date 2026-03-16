@@ -20,19 +20,25 @@ class Logger:
             self.log(metrics)
             time.sleep(1)
         
-    def log(self, metrics):
+    def log(self, metrics) -> None:
         """Appends a single metric snapshot to the log file."""
+        success = False
         if self.format == "json":
             self._log_json(metrics)
+            success = True
         elif self.format == "csv":
             self._log_csv(metrics)
+            success = True
+            
+        return success
             
     def _log_json(self, metrics):
         timestamp = datetime.now()
         date = timestamp.date().strftime("%Y-%m-%d")
         time = timestamp.time().strftime("%H:%M:%S")
+        log_data = {}
         
-        if Path(self.path).exists:
+        if Path(self.path).exists():
             try:
                 with open(self.path, "r") as f:
                     log_data = json.load(f)
