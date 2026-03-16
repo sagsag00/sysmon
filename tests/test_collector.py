@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from types import SimpleNamespace
 
-from src.collector import get_cpu, get_memory, get_disks, get_network, collect_metrics
+from src.collector import get_cpu, get_memory, get_disks, get_network, collect_metrics, mb, gb, gib
 from src._stats import CPUStats, MemoryStats, DiskStats, Metrics
 
 def test_get_cpu():
@@ -16,17 +16,17 @@ def test_get_cpu():
         
 def test_get_memory():
     mock_memory = SimpleNamespace(
-        total = 4000,
-        used = 400, 
-        available = 3600,
+        total = 4_000_000,
+        used = 400_000, 
+        available = 3_600_000,
         percent = 10
     )
     
     with patch("psutil.virtual_memory", return_value=mock_memory):
         memory: MemoryStats = get_memory()
-        assert memory["total"] == 4000
-        assert memory["used"] == 400
-        assert memory["available"] == 3600
+        assert memory["total"] == gib(4_000_000)
+        assert memory["used"] == gib(400_000)
+        assert memory["available"] == gib(3_600_000)
         assert memory["percent"] == 10
         
 def test_get_disks():
@@ -36,9 +36,9 @@ def test_get_disks():
     )
 
     mock_usage = SimpleNamespace(
-        total = 1000,
-        used = 100,
-        free = 900,
+        total = 1_000_000,
+        used = 100_000,
+        free = 900_000,
         percent = 10
     )
     
@@ -48,9 +48,9 @@ def test_get_disks():
             assert len(disks) == 1
             assert disks[0]["device"] == "/dev/sda1"
             assert disks[0]["mountpoint"] == "/"
-            assert disks[0]["total"] == 1000
-            assert disks[0]["used"] == 100
-            assert disks[0]["free"] == 900
+            assert disks[0]["total"] == gb(1_000_000)
+            assert disks[0]["used"] == gb(100_000)
+            assert disks[0]["free"] == gb(900_000)
             assert disks[0]["percent"] == 10
             
     with patch("psutil.disk_partitions", return_value=[]):
@@ -59,14 +59,14 @@ def test_get_disks():
             
 def test_get_network():
     mock_network = SimpleNamespace(
-        bytes_recv = 1000,
-        bytes_sent = 100
+        bytes_recv = 100_000_000,
+        bytes_sent = 1_000_000
     )
     
     with patch("psutil.net_io_counters", return_value=mock_network):
         network = get_network()
-        assert network["download"] == 1000
-        assert network["upload"] == 100
+        assert network["download"] == mb(100_000_000)
+        assert network["upload"] == mb(1_000_000)
             
 def test_collect_metrics():
     with (
