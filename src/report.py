@@ -4,11 +4,13 @@ from datetime import datetime
 from pathlib import Path
 from collections import defaultdict
 
-def get_by_date(log_path: str, date: str):
+def get_by_date(log_path: str, date: str) -> dict:
+    if not log_path or not date:
+        return {}
+    
     log_file = Path(log_path)
     if not log_file.exists():
-        print("File not found")
-        return
+        return {}
     
     data = {}
     if "json" in log_file.suffix:
@@ -16,7 +18,7 @@ def get_by_date(log_path: str, date: str):
     elif "csv" in log_file.suffix:
         data = _search_csv(log_file, to_date_str(date))
         
-    return data
+    return data 
 
 def to_date_str(date_str: str) -> str:
     """
@@ -34,16 +36,22 @@ def to_time_str(date_str: str) -> str:
     """
     if "." in date_str or "T" in date_str:
         dt = datetime.fromisoformat(date_str)
-        return dt.time().strftime("%H-%M-%S")
+        return dt.time().strftime("%H:%M:%S")
     else:
         return date_str
         
 def _search_json(file: Path, date: str) -> dict:
-    with open(file) as f:
-        data: dict = json.load(f)
+    if not file or not file.exists():
+        return {}
+    
+    try:
+        with open(file) as f:
+            data: dict = json.load(f)
+    except (PermissionError, FileNotFoundError):
+        return {}
         
     if date not in data:
-        return None
+        return {}
         
     current_data: dict = data[date]
     max_dict, min_dict = {}, {}
@@ -74,20 +82,26 @@ def _search_json(file: Path, date: str) -> dict:
     }
     
 def _search_csv(file: Path, date: str) -> dict:
-    with open(file) as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
+    if not file or not file.exists():
+        return {}
+    
+    try:
+        with open(file) as f:
+            reader = csv.DictReader(f)
+            rows = list(reader)
+    except (PermissionError, FileNotFoundError):
+        return {}
         
     if not rows:
-        return None
+        return {}
     
     current_data = [
         row for row in rows
-        if to_date_str(row["timestamp"]) == date
+        if to_date_str(row["timestamp"]) == to_date_str(date)
     ]
     
     if not current_data:
-        return None
+        return {}
     
     max_dict, min_dict = {}, {}
     stats: dict[str, list] = defaultdict(lambda: {"sum": 0, "count": 0})
@@ -108,9 +122,9 @@ def _search_csv(file: Path, date: str) -> dict:
         "avg": avg_dict
     }
     
-def _update_stats(key, value, time, max_dict, min_dict, stats):
+def _update_stats(key: str, value: int | float, time: str, max_dict: dict, min_dict: dict, stats: defaultdict):
     if not isinstance(value, (int, float)):
-        return
+        return {}
     
     if key not in max_dict or value > max_dict[key][0]:
         max_dict[key] = (value, time)
