@@ -4,7 +4,7 @@ import sys
 from rich import print
 
 from collector import collect_metrics
-from display import render, print_data
+from display import render, print_data, print_error
 from logger import Logger
 from report import get_by_date
 from config import Config
@@ -68,7 +68,10 @@ def main():
     
     if date:
         data = get_by_date(log_path, date)
-        print_data(data, date)
+        if data:
+            print_data(data, date)
+        else:
+            print_error(f"Couldn't retrieve data from log file: {log_path}")
     
     logger = Logger(log_path) 
     
@@ -79,7 +82,7 @@ def main():
     try:
         render(collect_metrics, args=(interval,))
     except KeyboardInterrupt:
-        print("\n[bold red]SysMon stopped by user.[/bold red]")
+        print_error("\nSysMon stopped by user.")
         sys.exit(0)
     
 if __name__ == "__main__":

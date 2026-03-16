@@ -1,6 +1,7 @@
 from rich.live import Live
 from rich.console import Console
 from rich.table import Table
+from rich import print
 import time
 from typing import Callable
 
@@ -133,6 +134,10 @@ def create_table(data: Metrics) -> Table:
     table.add_row("Upload Speed", f"[blue]{network['upload']} MB/s")
         
     return table
+
+def print_error(message: str) -> None:
+    """Prints the error message in bold red."""
+    print(f"[bold red]{message}")
 
 def format_color(percent: float, component: str = "") -> str:
     """

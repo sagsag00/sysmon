@@ -64,8 +64,8 @@ class Logger:
             "memory_used (GiB)": metrics["memory"]["used"],
             "memory_total (GiB)": metrics["memory"]["total"],
             "memory_percent": metrics["memory"]["percent"],
-            "download_speed (MB/s)": metrics["network"]["download"],
-            "upload_speed (MB/s)": metrics["network"]["upload"]
+            "network_download (MB/s)": metrics["network"]["download"],
+            "network_upload (MB/s)": metrics["network"]["upload"]
         }
         for i, disk in enumerate(metrics["disks"]):
             row[f"disk_{i}_mount"] = disk["mountpoint"]

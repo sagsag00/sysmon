@@ -114,8 +114,16 @@ def _search_csv(file: Path, date: str) -> dict:
         for key, value in row.items():
             if key == "timestamp":
                 continue
+            try:
+                num = float(value)
+            except (TypeError, ValueError):
+                continue
             
-            _update_stats(key, float(value), time, max_dict, min_dict, stats)
+            # Change it to name it as cpu.total_percent for example
+            key = key.split(" ")[0].split("_", 1)
+            key = f"{key[0]}.{key[1]}"
+            
+            _update_stats(key, num, time, max_dict, min_dict, stats)
 
     avg_dict = {k: s["sum"] / s["count"] for k, s in stats.items()}
     
