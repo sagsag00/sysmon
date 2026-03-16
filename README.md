@@ -20,7 +20,7 @@ pip install psutil rich
 ## Usage
 
 ```
-python src/main.py --log LOG_FILE [--format FORMAT] [--interval INTERVAL] [--cpu-warn CPU_WARN] [--mem-warn MEM_WARN] [--date DATE]
+python src/main.py [--log LOG_FILE] [--format FORMAT] [--interval INTERVAL] [--cpu-warn CPU_WARN] [--mem-warn MEM_WARN] [--date DATE]
 ```
 
 | Argument | Required | Default | Description |
