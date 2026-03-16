@@ -18,7 +18,7 @@ def render(get_metrics: Callable, args: tuple = None) -> None:
             time.sleep(1)
             
 def print_data(data: dict, date: str) -> None:
-    """Prints given data in a readable format"""
+    """Prints given report data in a readable format"""
     console = Console()
     console.print(create_report_table(data, date))
             
@@ -99,7 +99,7 @@ def create_report_table(data: dict, date: str) -> Table:
     return table
             
 def create_table(data: Metrics) -> Table:
-    """Creates a table with the provided data"""
+    """Creates a table with the provided data for system metrics"""
     table = Table(title="System Metrics")
     table.add_column("Metric")
     table.add_column("Value")

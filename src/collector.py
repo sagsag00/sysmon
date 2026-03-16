@@ -112,7 +112,13 @@ def get_disks() -> DiskStats:
     return disks
 
 def get_network() -> NetworkStats:
-    """Gets the download and upload speeds in MB"""
+    """Gets the download and upload speeds in MB
+    
+    Returns:
+        dict: Network statistics containing:
+            download (int): The download speed in MB/s
+            upload (int): The upload speed in MB/s
+    """
     net = psutil.net_io_counters()
 
     return {
@@ -120,11 +126,11 @@ def get_network() -> NetworkStats:
         "upload": mb(net.bytes_sent)
     }
     
-def gib(b):
+def gib(b: int) -> int:
     return round(b / (1024**3), 2)
 
-def gb(b):
+def gb(b: int) -> int:
     return  round(b / (1000**3), 2)
 
-def mb(b):
+def mb(b: int) -> int:
     return round(b / (1000**2), 2)

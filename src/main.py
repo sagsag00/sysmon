@@ -10,6 +10,7 @@ from report import get_by_date
 from config import Config
 
 def parse_args():
+    """Parses the given commandline args"""
     parser = argparse.ArgumentParser(description="SysMon - System Monitoring CLI Tool")
     parser.add_argument(
         "--interval", "-i",

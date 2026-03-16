@@ -5,6 +5,7 @@ from pathlib import Path
 from collections import defaultdict
 
 def get_by_date(log_path: str, date: str) -> dict:
+    """Gets a report by date from the provided log file (path)"""
     if not log_path or not date:
         return {}
     
@@ -32,7 +33,7 @@ def to_date_str(date_str: str) -> str:
     
 def to_time_str(date_str: str) -> str:
     """
-    Convert a date string or full ISO timestamp to `HH-MM-SS`
+    Convert a date string or full ISO timestamp to `HH:MM:SS`
     """
     if "." in date_str or "T" in date_str:
         dt = datetime.fromisoformat(date_str)

@@ -32,7 +32,7 @@ class Logger:
             
         return success
             
-    def _log_json(self, metrics):
+    def _log_json(self, metrics: dict):
         timestamp = datetime.now()
         date = timestamp.date().strftime("%Y-%m-%d")
         time = timestamp.time().strftime("%H:%M:%S")
@@ -56,7 +56,7 @@ class Logger:
         except (PermissionError, FileNotFoundError):
             return
             
-    def _log_csv(self, metrics):
+    def _log_csv(self, metrics: dict):
         row = {
             "timestamp": datetime.now().isoformat(),
             "cpu_total_percent": metrics["cpu"]["total_percent"],
