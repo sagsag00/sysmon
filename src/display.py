@@ -17,14 +17,14 @@ def render(get_metrics: Callable, args: tuple = None) -> None:
             live.update(table)
             time.sleep(1)
             
-def print_data(data: dict) -> None:
+def print_data(data: dict, date: str) -> None:
     """Prints given data in a readable format"""
     console = Console()
-    console.print(create_report_table(data))
+    console.print(create_report_table(data, date))
             
-def create_report_table(data: dict) -> Table:
+def create_report_table(data: dict, date: str) -> Table:
     """Creates a table displaying min, max, and avg stats from a report"""
-    table = Table(title="System Metrics Report")
+    table = Table(title=f"System Metrics Report {date}")
     table.add_column("Metric")
     table.add_column("Min")
     table.add_column("Max")

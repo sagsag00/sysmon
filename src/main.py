@@ -67,7 +67,7 @@ def main():
     
     if date:
         data = get_by_date(log_path, date)
-        print_data(data)
+        print_data(data, date)
     
     logger = Logger(log_path) 
     
