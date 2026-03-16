@@ -2,6 +2,9 @@
 
 A Python tool for collecting, logging, and reporting system metrics (CPU, memory, disk, network) using `psutil` and `rich`.
 
+![Alt text](assets/live.png)
+![Alt text](assets/report.png)
+
 ## Features
 
 - Real-time live display of system metrics in the terminal
