@@ -70,6 +70,8 @@ def _search_json(file: Path, date: str) -> dict:
                         _update_stats(key, value, time, max_dict, min_dict, stats)
             else:
                 for metric_name, value in sub_metrics.items():
+                    if metric_name in ("core_count"):
+                        continue
                     key = f"{metric_category}.{metric_name}"
                     _update_stats(key, value, time, max_dict, min_dict, stats)
                     

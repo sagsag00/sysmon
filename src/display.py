@@ -47,12 +47,6 @@ def create_report_table(data: dict, date: str) -> Table:
         fmt_percent("cpu.total_percent", max_d["cpu.total_percent"][0], max_d["cpu.total_percent"][1]),
         fmt_avg(avg_d["cpu.total_percent"], "%")
     )
-    table.add_row(
-        "CPU Cores",
-        str(min_d["cpu.core_count"][0]),
-        str(max_d["cpu.core_count"][0]),
-        str(int(avg_d["cpu.core_count"]))
-    )
 
     table.add_section()
 
