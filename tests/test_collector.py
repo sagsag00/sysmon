@@ -53,6 +53,10 @@ def test_get_disks():
             assert disks[0]["free"] == gb(900_000)
             assert disks[0]["percent"] == 10
             
+        with patch("psutil.disk_usage", side_effect=PermissionError):
+            disks = get_disks()
+            assert disks == []
+            
     with patch("psutil.disk_partitions", return_value=[]):
         disks = get_disks()
         assert disks == []
