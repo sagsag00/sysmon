@@ -108,15 +108,15 @@ def create_table(data: Metrics) -> Table:
     cpu = data["cpu"]
     memory = data["memory"]
 
-    table.add_row("CPU Usage", f"[{format_color(cpu['total_percent'], "cpu")}]{cpu['total_percent']}%")
+    table.add_row("CPU Usage", f"[{format_color(cpu['total_percent'], 'cpu')}]{cpu['total_percent']}%")
     table.add_row("CPU Cores", str(cpu["core_count"]))
     for i, core in enumerate(cpu["per_core_percent"]):
-        table.add_row(f"CPU Core {i}", f"[{format_color(core, "cpu")}]{core}%")
+        table.add_row(f"CPU Core {i}", f"[{format_color(core, 'cpu')}]{core}%")
         
     table.add_section()
     
-    table.add_row("Memory Usage ", f"[{format_color(memory['percent'], "memory")}]{memory['used']} GiB / {memory['total']} GiB")
-    table.add_row("Memory Percent", f"[{format_color(memory['percent'], "memory")}]{memory['percent']}%")
+    table.add_row("Memory Usage ", f"[{format_color(memory['percent'], 'memory')}]{memory['used']} GiB / {memory['total']} GiB")
+    table.add_row("Memory Percent", f"[{format_color(memory['percent'], 'memory')}]{memory['percent']}%")
     
     table.add_section()
     
