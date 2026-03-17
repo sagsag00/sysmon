@@ -101,3 +101,6 @@ through many functions.
     to update the values in the stats dict.
 - Made config be attr.s instead of dataclass, I could also use pydantic BaseSettings.
 - Made --interval be a part of the config class.
+- Made _log_csv work with fieldname changes
+- Made Config class use threading lock
+- 

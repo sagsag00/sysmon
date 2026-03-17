@@ -12,7 +12,7 @@ class Config:
         with Config._lock:
             return self._cpu_warn
         
-    @property.setter
+    @cpu_warn.setter
     def cpu_warn(self, value):
         with Config._lock:
             self._cpu_warn = value
@@ -22,7 +22,7 @@ class Config:
         with Config._lock:
             return self._mem_warn
         
-    @property.setter
+    @mem_warn.setter
     def mem_warn(self, value):
         with Config._lock:
             self._mem_warn = value
@@ -32,7 +32,7 @@ class Config:
         with Config._lock:
             return self._interval
         
-    @property.setter
+    @interval.setter
     def interval(self, value):
         with Config._lock:
             self._interval = value
