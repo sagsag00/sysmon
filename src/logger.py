@@ -73,13 +73,36 @@ class Logger:
             row[f"disk_{i}_used (GB)"] = disk["used"]
             row[f"disk_{i}_total (GB)"] = disk["total"]
 
-        write_header = not self.path.exists()
         try:
-            with open(self.path, "a", newline="") as f:
-                writer = csv.DictWriter(f, fieldnames=row.keys())
-                if write_header:
-                    writer.writeheader()
+            existing_fields = []
+            if self.path.exists():
+                with open(self.path, "r", newline="") as f:
+                    reader = csv.reader(f)
+                    existing_fields = next(reader, [])
+            
+            new_fields = [f for f in row.keys() if f not in existing_fields]
+            all_fields = existing_fields + new_fields
+            needs_rewrite = bool(new_fields) and bool(existing_fields)
+                  
+            if not needs_rewrite:  
+                with open(self.path, "a", newline="") as f:
+                    writer = csv.DictWriter(f, fieldnames=row.keys())
+                    if not existing_fields:
+                        writer.writeheader()
+                    writer.writerow(row)
+                return
+            
+            with open(self.path, "r", newline="") as f:
+                existing_rows = list(csv.DictReader(f))
+                
+            with open(self.path, "w", newline="") as f:
+                writer = csv.DictWriter(f, fieldnames=all_fields, extrasaction="ignore")    
+                writer.writeheader()
+                for old_row in existing_rows:
+                    writer.writerow(old_row)
                 writer.writerow(row)
+                
         except (PermissionError, FileNotFoundError):
             return
             
+        
