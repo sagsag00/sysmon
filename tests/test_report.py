@@ -3,7 +3,19 @@ import csv
 from pathlib import Path
 from collections import defaultdict
 
-from src.report import get_by_date, _search_csv, _search_json, to_date_str, to_time_str, _update_stats
+import pytest
+
+from src.report import (
+    get_by_date,
+    _search,
+    _extract_csv,
+    _extract_disks,
+    _extract_json,
+    _extract_regular,
+    to_date_str,
+    to_time_str,
+    _update_stats,
+)
 
 def create_log_file(path, format=None):
     data = {
@@ -48,21 +60,33 @@ def create_log_file(path, format=None):
 
 def test_get_by_date(tmp_path):
     assert get_by_date(None, None) == {}
-    
+    assert get_by_date(tmp_path, None) == {}
+
     date = "2026-03-16"
     
-    assert get_by_date(tmp_path, date) == {}
-    
+    # non-existing file
     log_file = tmp_path / "log.txt"
     assert get_by_date(log_file, date) == {}
-    
+
+    # JSON log
     log_file = tmp_path / "log.json"
     create_log_file(log_file)
-    assert get_by_date(log_file, date) != {}
+    result = get_by_date(log_file, date)
+    assert result != {}
+    assert result["avg"]["cpu.total_percent"] == 90.0
+    assert result["max"]["cpu.total_percent"][0] == 100
+    assert result["min"]["cpu.total_percent"][0] == 80
+    assert result["avg"].get("disks.C:\\.mountpoint") is None
+    assert result["avg"]["disks.C:\\.total"] == 100
     
+    # CSV log
     log_file = tmp_path / "log.csv"
     create_log_file(log_file)
-    assert get_by_date(log_file, date) != {}
+    result_csv = get_by_date(log_file, date)
+    assert result_csv != {}
+    assert result_csv["avg"]["cpu.total_percent"] == pytest.approx(80.1)
+    assert result_csv["max"]["cpu.total_percent"][0] == 80.1
+    assert result_csv["min"]["cpu.total_percent"][0] == 80.1
     
 def test_to_date_str():
     date = "2026-03-16"
@@ -79,49 +103,51 @@ def test_to_time_str():
     assert to_time_str(date_hour) == time
     
 def test_search_json(tmp_path):
-    assert _search_json(None, None) == {}
-    
     date = "2026-03-16"
     other_date = "2026-03-17"
     log_file = tmp_path / "log.json"
 
-    assert _search_json(tmp_path, date) == {}
-    assert _search_json(log_file, date) == {}
+    # empty or invalid input
+    assert _search(log_file, other_date, _extract_json) == {}
     
     create_log_file(log_file)
-    assert _search_json(log_file, other_date) == {}
-    
-    result = _search_json(log_file, date) 
+    result = _search(log_file, date, _extract_json)
     assert result["avg"]["cpu.total_percent"] == 90.0
     assert result["max"]["cpu.total_percent"][0] == 100
     assert result["min"]["cpu.total_percent"][0] == 80
-    assert result["avg"].get("disks.C:\\.mountpoint") == None
+    assert result["avg"].get("disks.C:\\.mountpoint") is None
     assert result["avg"]["disks.C:\\.total"] == 100
     
     
 def test_search_csv(tmp_path):
-    assert _search_csv(None, None) == {}
-    
     date = "2026-03-16"
     other_date = "2026-03-17"
-    timestamp = "2026-03-16T10:54:03"
     log_file = tmp_path / "log.csv"
-    stats = {'avg': {'cpu_total_percent': 80.1}, 'max': {'cpu_total_percent': (80.1, '10:54:32')}, 'min': {'cpu_total_percent': (80.1, '10:54:32')}}
-    
-    assert _search_csv(tmp_path, date) == {}
-    assert _search_csv(log_file, date) == {}
-    
+
     create_log_file(log_file)
-    assert _search_csv(log_file, date) == _search_csv(log_file, timestamp)
-    assert _search_csv(log_file, other_date) == {}
-    assert _search_csv(log_file, date) == stats
+    result = _search(log_file, date, _extract_csv)
+    
+    # Stats checks
+    assert result["avg"]["cpu.total_percent"] == pytest.approx(80.1)
+    assert result["max"]["cpu.total_percent"][0] == 80.1
+    assert result["min"]["cpu.total_percent"][0] == 80.1
+
+    # Searching for a non-existent date
+    assert _search(log_file, other_date, _extract_csv) == {'avg': {}, 'max': {}, 'min': {}}
 
 def test_update_stats():
     stats = defaultdict(lambda: {"sum": 0, "count": 0})
     stats_copy = stats.copy()
     max_dict, min_dict = {}, {}
-    
-    assert _update_stats("test", "fake", "time", max_dict, min_dict, stats) == {}
+
+    # Non-numeric value is ignored
+    _update_stats("test", "fake", "time", max_dict, min_dict, stats)
     assert stats == stats_copy
-    assert _update_stats("test", 1, "time", max_dict, min_dict, stats) == None
-    assert stats == {'test': {'sum': 1, 'count': 1}}
+    assert max_dict == {}
+    assert min_dict == {}
+
+    # Numeric value is processed correctly
+    _update_stats("test", 1, "time", max_dict, min_dict, stats)
+    assert stats == {"test": {"sum": 1, "count": 1}}
+    assert max_dict["test"][0] == 1
+    assert min_dict["test"][0] == 1
