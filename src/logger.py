@@ -5,8 +5,6 @@ from typing import Callable
 import time
 from datetime import datetime
 
-from _stats import Metrics
-
 class Logger:
     def __init__(self, path: str):
         self.path = Path(path)
