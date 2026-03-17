@@ -54,52 +54,18 @@ python src/main.py --date 2026-03-16
 ### JSON
 
 ```json
-{
-  "2026-03-16": {
-    "10:00:00": {
-      "metrics": {
-        "cpu": {
-            "total_percent": 50.0,
-            "per_core_percent": [
-                56.9,
-                54.7,
-                53.8,
-                41.5,
-                40.6,
-                52.3
-            ],
-            "core_count": 6
-        },
-        "memory": {
-            "total": 31.94,
-            "used": 15.82,
-            "available": 16.12,
-            "percent": 49.5
-        },
-        "disks": [
-            {
-                "device": "C:\\",
-                "mountpoint": "C:\\",
-                "total": 498.26,
-                "used": 442.01,
-                "free": 56.25,
-                "percent": 88.7
-            },
-            {
-                "device": "D:\\",
-                "mountpoint": "D:\\",
-                "total": 500.1,
-                "used": 424.2,
-                "free": 75.91,
-                "percent": 84.8
-            }
-        ],
-        "network": {
-            "download": 209.38,
-            "upload": 17.37
-        }
-      }
-  }
+{"timestamp": "2026-03-17T15:23:13.084731",
+    "metrics": 
+    {"cpu": 
+        {"total_percent": 0.0, "per_core_percent": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "core_count": 6},
+    "memory": 
+        {"total": 31.94, "used": 17.59, "available": 14.34, "percent": 55.1},
+    "disks": 
+        [{"device": "C:\\", "mountpoint": "C:\\", "total": 498.26, "used": 430.66, "free": 67.6, "percent": 86.4},
+         {"device": "D:\\", "mountpoint": "D:\\", "total": 500.1, "used": 424.19, "free": 75.92, "percent": 84.8}], 
+    "network": 
+        {"download": 14815.73, "upload": 437.49}
+    }
 }
 ```
 

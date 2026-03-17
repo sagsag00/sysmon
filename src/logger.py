@@ -5,15 +5,13 @@ from typing import Callable
 import time
 from datetime import datetime
 
-from _stats import Metrics
-
 class Logger:
     def __init__(self, path: str):
         self.path = Path(path)
         self.format = self.path.suffix.replace(".", "")
         self.path.parent.mkdir(parents=True, exist_ok=True)
         
-    def start_logging(self, get_metrics: Callable, args: tuple):
+    def start_logging(self, get_metrics: Callable, args: tuple = None):
         """Starts logging until program stops."""
         while True:
             metrics = get_metrics(*(args or ()))
@@ -33,27 +31,15 @@ class Logger:
         return success
             
     def _log_json(self, metrics: dict):
-        timestamp = datetime.now()
-        date = timestamp.date().strftime("%Y-%m-%d")
-        time = timestamp.time().strftime("%H:%M:%S")
-        log_data = {}
-        
-        if Path(self.path).exists():
-            try:
-                with open(self.path, "r") as f:
-                    log_data = json.load(f)
-            except (json.JSONDecodeError, FileNotFoundError, PermissionError):
-                log_data = {}
-                
-        if date not in log_data:
-            log_data[date] = {}
-    
-        log_data[date][time] = {"metrics": metrics}
-    
+        timestamp = datetime.now().isoformat()
+        entry = {
+            "timestamp": timestamp,
+            "metrics": metrics
+        }
         try:
-            with open(self.path, "w") as f:
-                json.dump(log_data, f, indent=4)
-        except (PermissionError, FileNotFoundError):
+            with open(self.path, "a") as f: 
+                f.write(json.dumps(entry) + "\n")
+        except (PermissionError, OSError):
             return
             
     def _log_csv(self, metrics: dict):
@@ -73,13 +59,36 @@ class Logger:
             row[f"disk_{i}_used (GB)"] = disk["used"]
             row[f"disk_{i}_total (GB)"] = disk["total"]
 
-        write_header = not self.path.exists()
         try:
-            with open(self.path, "a", newline="") as f:
-                writer = csv.DictWriter(f, fieldnames=row.keys())
-                if write_header:
-                    writer.writeheader()
+            existing_fields = []
+            if self.path.exists():
+                with open(self.path, "r", newline="") as f:
+                    reader = csv.reader(f)
+                    existing_fields = next(reader, [])
+            
+            new_fields = [f for f in row.keys() if f not in existing_fields]
+            all_fields = existing_fields + new_fields
+            needs_rewrite = bool(new_fields) and bool(existing_fields)
+                  
+            if not needs_rewrite:  
+                with open(self.path, "a", newline="") as f:
+                    writer = csv.DictWriter(f, fieldnames=row.keys())
+                    if not existing_fields:
+                        writer.writeheader()
+                    writer.writerow(row)
+                return
+            
+            with open(self.path, "r", newline="") as f:
+                existing_rows = list(csv.DictReader(f))
+                
+            with open(self.path, "w", newline="") as f:
+                writer = csv.DictWriter(f, fieldnames=all_fields, extrasaction="ignore")    
+                writer.writeheader()
+                for old_row in existing_rows:
+                    writer.writerow(old_row)
                 writer.writerow(row)
+                
         except (PermissionError, FileNotFoundError):
             return
             
+        

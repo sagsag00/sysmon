@@ -1,6 +1,6 @@
-[SysMon]
+# SysMon - Design
 
-[collector.py]
+## `collector.py`
 The first thing I have done on this project is to create the `collector.py` module.
 I started by familiarizing with the api and understanding the needed functions -
 `cpu_percent`, `cpu_count`, `virtual_memory`, `disk_partitions` and `disk_usage`
@@ -12,7 +12,7 @@ be called whenever you need to start collecting the information, making
 this module be standalone, and it won't be called in a class other then
 `main.py`.
 
-[_stats.py]
+## `_stats.py`
 I also created `_stats.py`, which stores a TypedDict of each statistic, but
 for now, I disabled it, because when I start test_collector.py, it cannot find
 this class (because I need to do from src.collector instead of from collector
@@ -21,7 +21,7 @@ I read online that in the pyproject.toml I can specify that the main directory
 is actually src, and then the pytest module will not make prolbems, for now
 its disabled).
 
-[display.py]
+## `display.py`
 After finishing the collector modules, I started to focus on the display, by creating
 `display.py`, I could show the live data with a table, that will auto update.
 It will get the data from a provided function, meaning that it is not connected
@@ -31,16 +31,16 @@ later (on later commits), I provided more data, colors (with rich) and I made th
 easier to understand and read.
 The display was fairly easy to make and I didn't run to any problems during the creation.
 
-[main.py]
+## `main.py`
 For now, the only thing I've done on this module is to provide the `render` function from `display.py` 
 with the `collect_metrics` function from `collector.py`, so each live iteration, it can
 collect the data, making both modules disconnected from each other.
 
-[test_collector.py]
+## `test_collector.py`
 When I finished the display and main, I started making `test_collector.py`. The only problem
 I ran through is what I described on the `_stats.py` explanation,
 
-[logger.py]
+## `logger.py`
 I had the most fun creating this module.
 By doing a similar thing I've done in `display.py`, I can get the same function
 and collect the data, but this time save it to a file instead of displaying it.
@@ -52,7 +52,7 @@ that all the entries from one date, weren't grouped together, so later, I decide
 I made the logger save the data (in json) as the date (parent) and then hour-minutes-seconds and then the data,
 making it way easier to create the `report.py` module way easier and having the data more readable.
 
-[arguments]
+## arguments
 I created all of the required arguments initially (`--interval`, `--log`) and on later commits I added 
 `--format`, `--date`, `--cpu-warn`, `--mem-warn`. 
 At the start, I thought I didn't need `--format` because I can just get the file extension in the path
@@ -62,30 +62,48 @@ if the log was provided, get the file extension and if not, get the file extensi
 The format cannot be None, because the default is json, so if its not provided, it automatically will be log.json.
 I also added a message to the keyboard interrupt.
 
-[test_logger.py]
+## `test_logger.py`
 This module was straightforward to make, only later I needed to scale it because 
 I scaled the logger moodule.
 
-[collector.py]
+## `collector.py`
 Added the network stats which were easy to add, needed to change a bit the test_collector module
 but it was also straightforward.
 
-[QoL]
+## QoL
 Made the data be more readable in the log files too, making it be in 
 Gigabytes or in Gibibytes.
 
-[reports.py]
+## `reports.py`
 I already explained the steps I took to have this work, other than those steps, I only needed
 to add a function that will create a table for the report, to make it readable.
 
-[test_reports.py]
+## `test_reports.py`
 It was pretty straightforward to make this module, overall, I just created the functions, and ran
 the tests, and would fix small issues that I had with the code.
 
-[End]
+## End
 Now I just fixed small issues, added more test cases to the files,
 added --mem-warn and --cpu-warn (by adding `config.py` file) - decided to not send a netification, just display in red
 and lastly I wrote the README.md, added requirements.txt (just incase) and made `_stats.py` work with `collector.py`
 
 I can possibly add the --interval to the config class, but I think there is no need because the interval is not threaded
 through many functions.
+
+## Refactoring
+- I removed most of the args (ie cpu_warn) and switched them to just args.property (ie args.cpu_warn).
+- Changed logpath to be logpath = ... OR ... instead of if .... else ...
+- Checking if logger is useless because it will always be true - removed it.
+- Delegation from main - modular function.
+- Delegated the reports.py functions:
+    now instead of 2 searches there is one main search that gets an extractor function.
+    The extractor function extracts the data and returns a generator that we can iterate through
+    to update the values in the stats dict.
+- Made config be attr.s instead of dataclass, I could also use pydantic BaseSettings.
+- Made --interval be a part of the config class.
+- Made _log_csv work with fieldname changes
+- Made Config class use threading lock
+- Decided to use JSONL file format inside the JSON format for easier appends, when data needs to be
+    read in the report, read it how you would before. Possible additions - change the file extension to 
+    JSONL, or create a tempfile which is JSONL and append to it and on exit, flush to a json file format
+    for now, because it takes way less time, I decided to leave it as is.
