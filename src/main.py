@@ -1,7 +1,6 @@
 import threading
 import argparse
 import sys
-from rich import print
 
 from collector import collect_metrics
 from display import render, print_data, print_error
@@ -52,38 +51,47 @@ def parse_args():
     
     return parser.parse_args()
 
-def main():
-    args = parse_args()
-    interval = args.interval
-    log_path = args.log
-    log_format = args.format
-    date = args.date
-    cpu_warn = args.cpu_warn
-    mem_warn = args.mem_warn
-    
-    Config.cpu_warn = cpu_warn
-    Config.mem_warn = mem_warn
-    
-    log_path = log_path if log_path else f"logs/log.{log_format}"
-    
-    if date:
-        data = get_by_date(log_path, date)
-        if data:
-            print_data(data, date)
-        else:
-            print_error(f"Couldn't retrieve data from log file: {log_path}")
-    
+def create_logger(log_path: str):
     logger = Logger(log_path) 
     
-    if logger:
-        logging_thread = threading.Thread(target=logger.start_logging, args=(collect_metrics, (interval,)), daemon=True)
-        logging_thread.start()
-    
+    logging_thread = threading.Thread(
+        target=logger.start_logging,
+        args=(collect_metrics,),
+        daemon=True)
+    logging_thread.start()
+
+def render_display():
     try:
-        render(collect_metrics, args=(interval,))
+        render(collect_metrics)
     except KeyboardInterrupt:
         print_error("\nSysMon stopped by user.")
         sys.exit(0)
+        
+def print_daily_report(date: str, log_path: str):
+    if not date:
+        return
+    
+    data = get_by_date(log_path, date)
+    if data:
+        print_data(data, date)
+    else:
+        print_error(f"Couldn't retrieve data from log file: {log_path}")
+
+def main():
+    args = parse_args()
+    
+    config = Config.get_instance()
+    config.cpu_warn =  args.cpu_warn
+    config.mem_warn = args.mem_warn
+    config.interval = args.interval
+    
+    log_path = args.log or f"logs/log.{args.format}"
+    
+    print_daily_report(args.date, log_path)
+    
+    create_logger(log_path)
+    
+    render_display()
     
 if __name__ == "__main__":
     main()

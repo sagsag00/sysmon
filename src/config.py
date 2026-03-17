@@ -1,13 +1,15 @@
-from dataclasses import dataclass
+import attr
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Config:
-    _instance = None
-    
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-    
     cpu_warn: float = 85
     mem_warn: float = 85
+    interval: int = 2
+
+    _instance = None
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance

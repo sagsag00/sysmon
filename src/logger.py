@@ -13,7 +13,7 @@ class Logger:
         self.format = self.path.suffix.replace(".", "")
         self.path.parent.mkdir(parents=True, exist_ok=True)
         
-    def start_logging(self, get_metrics: Callable, args: tuple):
+    def start_logging(self, get_metrics: Callable, args: tuple = None):
         """Starts logging until program stops."""
         while True:
             metrics = get_metrics(*(args or ()))

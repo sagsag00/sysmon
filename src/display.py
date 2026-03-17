@@ -147,9 +147,9 @@ def format_color(percent: float, component: str = "") -> str:
     """
     threshold = 85
     if component == "cpu":
-        threshold = Config.cpu_warn
+        threshold = Config.get_instance().cpu_warn
     elif component == "memory":
-        threshold = Config.mem_warn
+        threshold = Config.get_instance().mem_warn
     
     if percent < 0.7 * threshold:
         return "green"

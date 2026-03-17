@@ -1,8 +1,9 @@
 import psutil
 
 from _stats import CPUStats, MemoryStats, DiskStats, NetworkStats, Metrics
+from config import Config
 
-def collect_metrics(interval: float = 2) -> Metrics:
+def collect_metrics() -> Metrics:
     """
     Collect all system metrics.
 
@@ -32,13 +33,13 @@ def collect_metrics(interval: float = 2) -> Metrics:
                 - upload (int)
     """
     return {
-        "cpu": get_cpu(interval),
+        "cpu": get_cpu(),
         "memory": get_memory(),
         "disks": get_disks(),
         "network": get_network()
     }
 
-def get_cpu(interval: float = 2) -> CPUStats:
+def get_cpu() -> CPUStats:
     """
     Collect CPU usage statistics.
     
@@ -51,7 +52,7 @@ def get_cpu(interval: float = 2) -> CPUStats:
             per_core_percent (list[float]): CPU usage percentage per core.
             core_count (int | None): Number of CPU cores.
     """
-    per_core = psutil.cpu_percent(interval=interval, percpu=True)
+    per_core = psutil.cpu_percent(interval=Config.get_instance().interval, percpu=True)
     total = round(sum(per_core) / len(per_core), 1)
     return {
         "total_percent": total,

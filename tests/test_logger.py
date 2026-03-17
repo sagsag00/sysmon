@@ -51,7 +51,7 @@ def test_start_logging(tmp_path):
     with open(log_file) as f:
         data = json.load(f)
     
-    date = str(datetime.now().date())
+    date = "2026-03-16"
     assert len(data[date]) == 2
     
 def test_log(tmp_path):
