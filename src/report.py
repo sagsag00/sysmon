@@ -44,6 +44,24 @@ def to_time_str(date_str: str) -> str:
         return dt.time().strftime("%H:%M:%S")
     else:
         return date_str
+    
+def load_grouped(path: Path) -> dict:
+    """Groups the JSON data into dates and hours:
+    If the timestamp is 2026-03-16T10:00:00
+    it will put it in `data["2026-03-16"]["10:00:00"]`
+    """
+    grouped = defaultdict(dict)
+    
+    with open(str(path)) as f:
+        for line in f:
+            entry = json.loads(line)
+            ts = entry["timestamp"]
+            date, time = ts.split("T")
+            grouped[date][time.split(".")[0]] = {
+                "metrics": entry["metrics"]
+            }
+            
+    return dict(grouped)
    
 def _search(file: Path, date: str, extractor: Callable[[Path, str], Generator]) -> dict:
     if not file or not file.exists():
@@ -72,8 +90,7 @@ def _search(file: Path, date: str, extractor: Callable[[Path, str], Generator]) 
     }
         
 def _extract_json(file: Path, date: str):
-    with open(file) as f:
-        data: dict = json.load(f)
+    data = load_grouped(file)
         
     current_data: dict[str, dict] = data.get(date)
     if not current_data:

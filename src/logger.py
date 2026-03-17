@@ -31,27 +31,15 @@ class Logger:
         return success
             
     def _log_json(self, metrics: dict):
-        timestamp = datetime.now()
-        date = timestamp.date().strftime("%Y-%m-%d")
-        time = timestamp.time().strftime("%H:%M:%S")
-        log_data = {}
-        
-        if Path(self.path).exists():
-            try:
-                with open(self.path, "r") as f:
-                    log_data = json.load(f)
-            except (json.JSONDecodeError, FileNotFoundError, PermissionError):
-                log_data = {}
-                
-        if date not in log_data:
-            log_data[date] = {}
-    
-        log_data[date][time] = {"metrics": metrics}
-    
+        timestamp = datetime.now().isoformat()
+        entry = {
+            "timestamp": timestamp,
+            "metrics": metrics
+        }
         try:
-            with open(self.path, "w") as f:
-                json.dump(log_data, f, indent=4)
-        except (PermissionError, FileNotFoundError):
+            with open(self.path, "a") as f: 
+                f.write(json.dumps(entry) + "\n")
+        except (PermissionError, OSError):
             return
             
     def _log_csv(self, metrics: dict):

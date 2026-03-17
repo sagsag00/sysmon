@@ -103,4 +103,7 @@ through many functions.
 - Made --interval be a part of the config class.
 - Made _log_csv work with fieldname changes
 - Made Config class use threading lock
-- 
+- Decided to use JSONL file format inside the JSON format for easier appends, when data needs to be
+    read in the report, read it how you would before. Possible additions - change the file extension to 
+    JSONL, or create a tempfile which is JSONL and append to it and on exit, flush to a json file format
+    for now, because it takes way less time, I decided to leave it as is.
